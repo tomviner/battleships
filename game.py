@@ -29,7 +29,7 @@ class GameRunner(object):
                             is_horizontal = random.choice((False, True))
                         else:
                             last_coord = ship_coords[-1]
-                            print last_coord
+                            print(last_coord)
                             letter = last_coord[0]
                             number = last_coord[1:]
                             if is_horizontal:
@@ -56,9 +56,9 @@ class GameRunner(object):
         for letter in 'ABCDEFGHIJ':
             for number in range(1, 11):
                 coords = '{}{}'.format(letter, number)
-                print self.board.get(coords, '.'),
+                print(self.board.get(coords, '.'), end=' ')
 
-            print
+            print(' ', end='\n')
 
     def run(self):
         a = AI()
@@ -66,14 +66,14 @@ class GameRunner(object):
         moves = 0
         while self.board:
             moves += 1
-            print result
+            print(result)
             self.print_board()
-            print
-            print
+            print()
+            print()
             if self.DEBUG:
                 time.sleep(1)
             coords = a.play(result)
-            print coords
+            print(coords)
             if coords in self.board:
                 result = 'h'
                 ships_before = set(self.board.values())
@@ -82,13 +82,13 @@ class GameRunner(object):
                 diff = ships_before - ships_after
                 if diff:
                     sunk = diff.pop()
-                    print 'sunk', sunk
+                    print('sunk', sunk)
                     result = 's'
                 else:
-                    print 'h'
+                    print('h')
             else:
                 result = 'm'
-            print self.board
+            print(self.board)
         print('game over! in {} moves'.format(moves))
         return moves
 
@@ -98,4 +98,4 @@ results = []
 for i in range(10):
     gr = GameRunner()
     results.append(gr.run())
-print results, av(results)
+print(results, av(results))
