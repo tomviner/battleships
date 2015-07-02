@@ -2,6 +2,7 @@ from __future__ import division
 import random
 import time
 from ai import AI, get_random_coord, AI_but_no_repeat
+from the_grand_admiral import Admiral
 
 class InvalidShipError(ValueError):
     pass
@@ -73,7 +74,7 @@ class GameRunner(object):
             print()
             if self.DEBUG:
                 time.sleep(1)
-            coords = a.play(result)
+            coords = a.play(result).upper()
             print(coords)
             if coords in self.board:
                 result = 'h'
@@ -98,11 +99,16 @@ av = lambda ns: sum(ns) / len(ns)
 def test(ai):
     results = []
     for i in range(10):
+        print('run', i)
         gr = GameRunner(ai)
         results.append(gr.run())
     print(results, av(results))
 
-for i, ai in enumerate((AI, AI_but_no_repeat)):
-    if i:
-        input('continue?')
-    test(ai)
+def main():
+    for i, ai in enumerate((Admiral,)):
+        if i:
+            input('continue?')
+        test(ai)
+
+if __name__ == '__main__':
+    main()

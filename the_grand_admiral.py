@@ -1,7 +1,6 @@
 import numpy
 import random
 
-
 class Admiral():
 
     def __init__(self):
@@ -21,8 +20,10 @@ class Admiral():
         return resp_coords
 
     def play(self, resp=None):
-        assert resp in ['h', 'm', 's', None]
-        self.grid[self.lastmove] = resp
+        good = [None, 'h', 'm', 's']
+        assert resp in good
+        idx = good.index(resp)
+        self.grid[self.lastmove] = idx or None
         return self.fire()
 
     def coordToResponse(self, coords):
