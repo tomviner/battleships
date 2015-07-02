@@ -1,7 +1,9 @@
-# import sys
+import random
 import time
 from ai import AI, get_random_coord
 
+class InvalidShipError(ValueError):
+    pass
 
 class GameRunner(object):
     """GameRunner
@@ -13,10 +15,40 @@ class GameRunner(object):
     """
     def __init__(self):
         self.board = {}
-        for n, ship in zip((5, 4, 3, 3, 2), 'vwxyz'):
-            for i in range(n):
-                coords = get_random_coord()
-                self.board[coords] = ship
+        for n, ship_name in zip((5, 4, 3, 3, 2), 'vwxyz'):
+            valid = False
+            while not valid:
+                try:
+                    tmp_board = {}
+                    for i in range(n):
+                        if i == 0:
+                            ship_coords = []
+                            coords = get_random_coord()
+                            is_horizontal = random.choice((False, True))
+                        else:
+                            last_coord = ship_coords[-1]
+                            print last_coord
+                            letter = last_coord[0]
+                            number = last_coord[1:]
+                            if is_horizontal:
+                                letter = chr(ord(letter) + 1)
+                                if letter == 'K':
+                                    raise InvalidShipError
+                            else:
+                                number = int(number)
+                                number += 1
+                                if number > 10:
+                                    raise InvalidShipError
+                            coords = '{}{}'.format(letter, number)
+                        if coords in self.board:
+                            raise InvalidShipError
+                        tmp_board[coords] = ship_name
+                        ship_coords.append(coords)
+                except InvalidShipError:
+                    continue
+                else:
+                    self.board.update(tmp_board)
+                    break
 
     def print_board(self):
         for letter in 'ABCDEFGHIJ':
@@ -36,7 +68,7 @@ class GameRunner(object):
             self.print_board()
             print
             print
-            time.sleep(0.01)
+            time.sleep(1)
             coords = a.play(result)
             print coords
             if coords in self.board:
