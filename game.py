@@ -1,7 +1,7 @@
 from __future__ import division
 import random
 import time
-from the_grand_admiral import Admiral as AI, get_random_coord
+from ai import AI, get_random_coord, AI_but_no_repeat
 
 class InvalidShipError(ValueError):
     pass
@@ -14,7 +14,8 @@ class GameRunner(object):
         'A3': 'x',
     }
     """
-    def __init__(self, DEBUG=False):
+    def __init__(self, ai_class, DEBUG=False):
+        self.ai_class = ai_class
         self.DEBUG = DEBUG
         self.board = {}
         for n, ship_name in zip((5, 4, 3, 3, 2), 'vwxyz'):
@@ -61,7 +62,7 @@ class GameRunner(object):
             print(' ', end='\n')
 
     def run(self):
-        a = AI()
+        a = self.ai_class()
         result = None
         moves = 0
         while self.board:
@@ -92,10 +93,16 @@ class GameRunner(object):
         print('game over! in {} moves'.format(moves))
         return moves
 
-
 av = lambda ns: sum(ns) / len(ns)
-results = []
-for i in range(10):
-    gr = GameRunner()
-    results.append(gr.run())
-print(results, av(results))
+
+def test(ai):
+    results = []
+    for i in range(10):
+        gr = GameRunner(ai)
+        results.append(gr.run())
+    print(results, av(results))
+
+for i, ai in enumerate((AI, AI_but_no_repeat)):
+    if i:
+        input('continue?')
+    test(ai)
