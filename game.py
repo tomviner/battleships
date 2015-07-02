@@ -1,7 +1,7 @@
 from __future__ import division
 import random
 import time
-from ai import AI, get_random_coord
+from the_grand_admiral import Admiral as AI, get_random_coord
 
 class InvalidShipError(ValueError):
     pass
