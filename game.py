@@ -13,9 +13,18 @@ class GameRunner(object):
     """
     def __init__(self):
         self.board = {}
-        for l, ship in zip((5, 4, 3, 3, 2), 'vwxyz'):
-            coords = get_random_coord()
-            self.board[coords] = ship
+        for n, ship in zip((5, 4, 3, 3, 2), 'vwxyz'):
+            for i in range(n):
+                coords = get_random_coord()
+                self.board[coords] = ship
+
+    def print_board(self):
+        for letter in 'ABCDEFGHIJ':
+            for number in range(1, 11):
+                coords = '{}{}'.format(letter, number)
+                print self.board.get(coords, '.'),
+
+            print
 
     def run(self):
         a = AI()
@@ -24,6 +33,7 @@ class GameRunner(object):
         while self.board:
             moves += 1
             print result
+            self.print_board()
             print
             print
             time.sleep(0.01)
