@@ -11,3 +11,10 @@ def get_random_coord():
 class AI(object):
     def play(self, previous_result=None):
         return get_random_coord()
+
+class AI_but_no_repeat(object):
+    # def __init__(self):
+    #     self.
+
+    def play(self, previous_result=None):
+        return get_random_coord()
