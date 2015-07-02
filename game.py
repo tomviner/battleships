@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 import time
 from ai import AI, get_random_coord
@@ -13,7 +14,8 @@ class GameRunner(object):
         'A3': 'x',
     }
     """
-    def __init__(self):
+    def __init__(self, DEBUG=False):
+        self.DEBUG = DEBUG
         self.board = {}
         for n, ship_name in zip((5, 4, 3, 3, 2), 'vwxyz'):
             valid = False
@@ -68,7 +70,8 @@ class GameRunner(object):
             self.print_board()
             print
             print
-            time.sleep(1)
+            if self.DEBUG:
+                time.sleep(1)
             coords = a.play(result)
             print coords
             if coords in self.board:
@@ -87,7 +90,12 @@ class GameRunner(object):
                 result = 'm'
             print self.board
         print('game over! in {} moves'.format(moves))
+        return moves
 
 
-gr = GameRunner()
-gr.run()
+av = lambda ns: sum(ns) / len(ns)
+results = []
+for i in range(10):
+    gr = GameRunner()
+    results.append(gr.run())
+print results, av(results)
