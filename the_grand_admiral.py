@@ -16,7 +16,7 @@ class Admiral():
 
         self.lastmove = coords
         resp_coords = self.coordToResponse(coords)
-        print(resp_coords)
+        # print(resp_coords)
         return resp_coords
 
     def play(self, resp=None):

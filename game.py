@@ -1,7 +1,7 @@
 from __future__ import division
 import random
 import time
-from ai import AI, get_random_coord, AI_but_no_repeat
+from ai import AI, AI_but_no_repeat, get_random_coord
 from the_grand_admiral import Admiral
 
 class InvalidShipError(ValueError):
@@ -19,7 +19,7 @@ class GameRunner(object):
         self.ai_class = ai_class
         self.DEBUG = DEBUG
         self.board = {}
-        for n, ship_name in zip((5, 4, 3, 3, 2), 'vwxyz'):
+        for n, ship_name in zip((5, 4, 3, 3, 2), '#*%@+'):
             valid = False
             while not valid:
                 try:
@@ -31,7 +31,7 @@ class GameRunner(object):
                             is_horizontal = random.choice((False, True))
                         else:
                             last_coord = ship_coords[-1]
-                            print(last_coord)
+                            # print(last_coord)
                             letter = last_coord[0]
                             number = last_coord[1:]
                             if is_horizontal:
@@ -54,11 +54,14 @@ class GameRunner(object):
                     self.board.update(tmp_board)
                     break
 
-    def print_board(self):
-        for letter in 'ABCDEFGHIJ':
-            for number in range(1, 11):
+    def print_board(self, move=None):
+        for number in range(1, 11):
+            board_to_print = self.board.copy()
+            if move:
+                board_to_print.update(move)
+            for letter in 'ABCDEFGHIJ':
                 coords = '{}{}'.format(letter, number)
-                print(self.board.get(coords, '.'), end=' ')
+                print(board_to_print.get(coords, '.'), end=' ')
 
             print(' ', end='\n')
 
@@ -68,14 +71,12 @@ class GameRunner(object):
         moves = 0
         while self.board:
             moves += 1
-            print(result)
-            self.print_board()
+            msges = []
             print()
             print()
             if self.DEBUG:
                 time.sleep(1)
             coords = a.play(result).upper()
-            print(coords)
             if coords in self.board:
                 result = 'h'
                 ships_before = set(self.board.values())
@@ -84,13 +85,17 @@ class GameRunner(object):
                 diff = ships_before - ships_after
                 if diff:
                     sunk = diff.pop()
-                    print('sunk', sunk)
+                    msges.append('sunk ship {}!'.format(sunk))
                     result = 's'
                 else:
-                    print('h')
+                    msges.append('hit!')
             else:
                 result = 'm'
-            print(self.board)
+            # print(self.board)
+            print('attack', coords)
+            print('\n'.join(msges))
+            self.print_board({coords: result.upper()})
+        print()
         print('game over! in {} moves'.format(moves))
         return moves
 
@@ -102,13 +107,29 @@ def test(ai):
         print('run', i)
         gr = GameRunner(ai)
         results.append(gr.run())
-    print(results, av(results))
+    print()
+    print('Results for', ai.__name__)
+    print()
+    print('10 random games were completed in these number of moves')
+    print(results)
+    mean = int(av(results))
+    print('Averge score:', mean)
+    return mean
 
 def main():
-    for i, ai in enumerate((Admiral,)):
+    meta_res = []
+    for i, ai in enumerate((Admiral, AI, AI_but_no_repeat)):
         if i:
-            input('continue?')
-        test(ai)
+            print()
+            input('hit enter to play the next ai?')
+        mean = test(ai)
+        meta_res.append((mean, ai.__name__))
+
+    print()
+    print()
+    print('Overall results:')
+    for i, (mean, name) in enumerate(sorted(meta_res), 1):
+        print(i, name, mean, 'moves')
 
 if __name__ == '__main__':
     main()
